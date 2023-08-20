@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/lecture")
 @CrossOrigin
 public class LectureController {
 
