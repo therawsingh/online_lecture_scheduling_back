@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/instructor")
 public class InstructorController {
 
     @Autowired
@@ -24,9 +23,11 @@ public class InstructorController {
     }
 
     @PostMapping("/addInstructor")
-    public void addInstructor(@RequestBody Instructor instructor){
+    public String addInstructor(@RequestBody Instructor instructor){
 
         instructorRepository.save(instructor);
+
+        return "Instructor addedd successfully";
 
     }
 

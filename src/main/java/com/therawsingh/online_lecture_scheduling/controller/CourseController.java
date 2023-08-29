@@ -16,9 +16,11 @@ public class CourseController {
     CourseRepository courseRepository;
 
     @PostMapping("/addCourse")
-    public void addCourse(@RequestBody Course course){
+    public String addCourse(@RequestBody Course course){
 
         courseRepository.save(course);
+
+        return "Course successfully added";
 
     }
 

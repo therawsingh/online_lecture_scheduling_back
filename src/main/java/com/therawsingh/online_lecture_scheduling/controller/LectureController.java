@@ -9,6 +9,7 @@ import com.therawsingh.online_lecture_scheduling.repository.LectureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -36,7 +37,7 @@ public class LectureController {
 
         boolean dateMismatch = false;
         for (Lecture lect : instructor.getLectures()) {
-            if(lect.getDate() == lecture.getDate()){
+            if(lect.getDate().equals(lecture.getDate())){
                 dateMismatch = true;
                 break;
             }
@@ -47,11 +48,7 @@ public class LectureController {
             lecture.setCourse(course);
 
             lectureRepository.save(lecture);
-
-        } else {
-            //Do something with response entity
         }
-
     }
 
     @GetMapping("/getLectures/{instructor_name}")

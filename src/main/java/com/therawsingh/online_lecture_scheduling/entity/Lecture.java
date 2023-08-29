@@ -11,7 +11,7 @@ public class Lecture {
     @GeneratedValue
     long id;
 
-    Date date;
+    String date;
 
     @ManyToOne(fetch =  FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "course_id")
@@ -24,7 +24,7 @@ public class Lecture {
     public Lecture() {
     }
 
-    public Lecture(Date date, Course course, Instructor instructor) {
+    public Lecture(String date, Course course, Instructor instructor) {
         this.date = date;
         this.course = course;
         this.instructor = instructor;
@@ -38,11 +38,11 @@ public class Lecture {
         this.id = id;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

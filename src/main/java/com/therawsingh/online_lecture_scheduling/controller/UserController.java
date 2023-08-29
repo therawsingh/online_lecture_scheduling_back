@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/user")
+@RestController
 public class UserController {
 
     @Autowired
@@ -16,6 +16,13 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @GetMapping("/user")
+    public String userPage(){
+
+        return "User Page";
+
+    }
 
     @PostMapping("/addUser")
     public String addUser(@RequestBody User user) {
