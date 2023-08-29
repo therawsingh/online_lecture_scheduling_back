@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -14,18 +15,23 @@ public class UserDetailsImpl implements UserDetails {
 
     private String name;
     private String password;
-    private List<GrantedAuthority> authorities;
+    private String roles;
 
     public UserDetailsImpl(User user) {
 
         name = user.getName();
         password = user.getPassword();
-        authorities = Arrays.stream(user.getRole().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        roles = user.getRole();
 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        String[] roles = this.roles.split(",");
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
         return authorities;
     }
 

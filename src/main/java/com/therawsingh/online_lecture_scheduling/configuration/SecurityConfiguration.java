@@ -43,21 +43,9 @@ public class SecurityConfiguration {
         return new AuthenticationManager() {
             @Override
             public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                return null;
+                return authentication;
             }
         };
-    }
-
-    @Bean
-    AuthenticationManagerResolver authenticationManagerResolver(){
-
-        return new AuthenticationManagerResolver() {
-            @Override
-            public AuthenticationManager resolve(Object context) {
-                return null;
-            }
-        };
-
     }
 
     @Bean
@@ -94,11 +82,11 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .anyRequest().authenticated();})
 
-                .formLogin(formLogin -> {
+                /*.formLogin(formLogin -> {
                     formLogin.loginPage("http://localhost:5173/");
                     formLogin.loginProcessingUrl("/login");
                     formLogin.defaultSuccessUrl("/home", true);
-                })
+                })*/
 
                 .logout(logout -> logout.permitAll())
                 .build();
