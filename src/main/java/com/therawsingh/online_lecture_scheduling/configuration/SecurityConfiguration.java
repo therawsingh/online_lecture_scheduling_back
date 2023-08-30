@@ -6,7 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -39,14 +45,19 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(){
-        return new AuthenticationManager() {
-            @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                return authentication;
-            }
-        };
+    DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+
+        return daoAuthenticationProvider;
     }
+
+    @Bean
+    AuthenticationManager authenticationManager(DaoAuthenticationProvider daoAuthenticationProvider){
+        return new ProviderManager(Collections.singletonList(daoAuthenticationProvider));
+    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -61,10 +72,6 @@ public class SecurityConfiguration {
 
         return source;
     }
-
-
-    //.cors(Customizer.withDefaults())
-    //auth.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
@@ -81,12 +88,6 @@ public class SecurityConfiguration {
                 auth.requestMatchers("/login").permitAll();
                 auth.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .anyRequest().authenticated();})
-
-                /*.formLogin(formLogin -> {
-                    formLogin.loginPage("http://localhost:5173/");
-                    formLogin.loginProcessingUrl("/login");
-                    formLogin.defaultSuccessUrl("/home", true);
-                })*/
 
                 .logout(logout -> logout.permitAll())
                 .build();

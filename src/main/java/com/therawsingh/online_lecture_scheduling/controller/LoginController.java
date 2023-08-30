@@ -17,8 +17,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,32 +41,35 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<Authentication> loginHandle(@RequestBody LoginDTO login){
+    public ResponseEntity<Object> loginUser(@RequestBody LoginDTO login){
 
         System.out.println("inside login");
 
 
         User user = userRepository.findByName(login.getUsername());
+        Collection<GrantedAuthority> authorities;
 
-        String[] roles = user.getRole().split(",");
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
-            authorities.add(new SimpleGrantedAuthority(role));
+
+        if(user== null){
+            throw new UsernameNotFoundException("User not found");
         }
+        else{
+            String[] roles = user.getRole().split(",");
+            authorities = new ArrayList<>();
+            for (String role : roles) {
+                authorities.add(new SimpleGrantedAuthority(role));
+            }
 
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), authorities);
-        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), authorities);
+            Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            if(authentication.isAuthenticated()){
+                return ResponseEntity.ok(authentication.getPrincipal());
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
 
-        if(authentication.isAuthenticated()){
-            return ResponseEntity.ok(authentication);
         }
-        else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(authentication);
-        }
-
-
     }
-
 }
