@@ -89,6 +89,11 @@ public class SecurityConfiguration {
                 auth.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .anyRequest().authenticated();})
 
+                /*.formLogin(formLogin -> {
+                formLogin.loginPage("http://localhost:5173/");
+                formLogin.loginProcessingUrl("/login");
+                formLogin.defaultSuccessUrl("http://localhost:8080/home", true);})*/
+
                 .logout(logout -> logout.permitAll())
                 .build();
     }

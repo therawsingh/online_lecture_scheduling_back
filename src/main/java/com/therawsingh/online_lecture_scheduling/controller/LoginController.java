@@ -51,7 +51,7 @@ public class LoginController {
 
 
         if(user== null){
-            throw new UsernameNotFoundException("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         else{
             String[] roles = user.getRole().split(",");
@@ -60,7 +60,8 @@ public class LoginController {
                 authorities.add(new SimpleGrantedAuthority(role));
             }
 
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), authorities);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                    = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword(), authorities);
             Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
             if(authentication.isAuthenticated()){
@@ -69,7 +70,6 @@ public class LoginController {
             else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
-
         }
     }
 }
